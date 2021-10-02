@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/projects/android/MemoryGame/app/src/main/res/drawable/ic_face.xml" value="0.2546875" />
+        <entry key="..\:/projects/android/MemoryGame/app/src/main/res/drawable/ic_flower.xml" value="0.2546875" />
         <entry key="..\:/projects/android/MemoryGame/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/projects/android/MemoryGame/app/src/main/res/layout/memory_card.xml" value="0.152" />
       </map>
