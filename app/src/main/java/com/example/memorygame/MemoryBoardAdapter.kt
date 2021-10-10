@@ -6,31 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memorygame.models.BoardSize
+import com.example.memorygame.models.MemoryCard
 import kotlin.math.min
 
 class MemoryBoardAdapter(
         private val context: Context,
         private val boardSize: BoardSize,
-        private val cardImages: List<Int>
+        private val cardImages: List<MemoryCard>,
+        private val cardClickListener: CardClickListener
 ) : RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-
-        private val imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
-
-        fun bind(position: Int){
-            imageButton.setImageResource(cardImages[position])
-        }
-    }
 
     companion object {
         private const val MARGINS = 10
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    interface CardClickListener{
+        fun onCardClicked(position: Int)
+    }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val cardWidth = parent.width/boardSize.getWidth() - (2*MARGINS)
         val cardHeight = parent.height/boardSize.getHeight() - (2*MARGINS)
         val cardSize = min(cardHeight,cardWidth)
@@ -47,4 +45,21 @@ class MemoryBoardAdapter(
     }
 
     override fun getItemCount() = boardSize.numCards
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        private val imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
+        fun bind(position: Int){
+            val memoryCard = cardImages[position]
+            imageButton.setImageResource(if(memoryCard.isFaceUp) memoryCard.identifier else R.drawable.ic_launcher_background)
+
+            //setting opacity according to if card is already matched or not
+            imageButton.alpha = if(memoryCard.isMatched) .4f else 1.0f
+            val colorStateList = if(memoryCard.isMatched) ContextCompat.getColorStateList(context,R.color.color_gray) else null
+            ViewCompat.setBackgroundTintList(imageButton,colorStateList)
+
+            imageButton.setOnClickListener{
+                cardClickListener.onCardClicked(position)
+            }
+        }
+    }
 }

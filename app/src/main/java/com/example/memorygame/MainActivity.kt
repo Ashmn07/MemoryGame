@@ -6,10 +6,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memorygame.models.BoardSize
+import com.example.memorygame.models.MemoryCard
+import com.example.memorygame.models.MemoryGame
 import com.example.memorygame.utils.DEFAULT_ICONS
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var adapter: MemoryBoardAdapter
+    private lateinit var memoryGame: MemoryGame
     private lateinit var rvBoard : RecyclerView
     private lateinit var tvNumMoves : TextView
     private lateinit var tvNumPairs : TextView
@@ -24,11 +28,21 @@ class MainActivity : AppCompatActivity() {
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
 
-        val chosenImages = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
-        val randomizedImages = (chosenImages+chosenImages).shuffled()
+        memoryGame = MemoryGame(boardSize)
 
-        rvBoard.adapter = MemoryBoardAdapter(this,boardSize,randomizedImages)
+        adapter = MemoryBoardAdapter(this,boardSize,memoryGame.cards,object:MemoryBoardAdapter.CardClickListener{
+            override fun onCardClicked(position: Int) {
+                updateGameWithFlip(position)
+            }
+
+        })
+        rvBoard.adapter = adapter
         rvBoard.setHasFixedSize(true)
         rvBoard.layoutManager = GridLayoutManager(this,boardSize.getWidth())
+    }
+
+    private fun updateGameWithFlip(position: Int) {
+        memoryGame.flipCard(position)
+        adapter.notifyDataSetChanged()
     }
 }
